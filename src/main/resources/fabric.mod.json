@@ -1,37 +1,37 @@
 {
-	"schemaVersion": 1,
-	"id": "neoedit",
-	"version": "0.0.1",
-	"name": "NeoEdit",
-	"description": "A simple building mod for Minecraft",
-	"authors": [
-		"Tim Gorbenko"
+  "schemaVersion": 1,
+  "id": "neoedit",
+  "version": "0.0.1",
+  "name": "NeoEdit",
+  "description": "A sane building mod for Minecraft",
+  "authors": [
+	"Tim Gorbenko"
+  ],
+  "contact": {
+	"homepage": "https://github.com/TimGorbenko/NeoEdit",
+	"sources": "https://github.com/TimGorbenko/"
+  },
+  "license": "Unlicense",
+  "icon": "assets/neoedit/icon.png",
+  "environment": "*",
+  "entrypoints": {
+	"main": [
+	  "org.neoedit.neoedit.NeoEdit"
 	],
-	"contact": {
-		"homepage": "https://github.com/TimGorbenko/NeoEdit",
-		"sources": "https://github.com/TimGorbenko/"
-	},
-	"license": "Unlicense",
-	"icon": "assets/neoedit/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"org.neoedit.neoedit.NeoEdit"
-		],
-		"fabric-datagen": [
-			"org.neoedit.neoedit.NeoEditDataGenerator"
-		],
-		"client": [
-			"org.neoedit.neoedit.NeoEditClient"
-		]
-	},
-	"mixins": [
-		"neoedit.mixins.json"
+	"fabric-datagen": [
+	  "org.neoedit.neoedit.NeoEditDataGenerator"
 	],
-	"depends": {
-		"fabricloader": ">=0.19.2",
-		"minecraft": "~26.1",
-		"java": ">=25",
-		"fabric-api": "*"
-	}
+	"client": [
+	  "org.neoedit.neoedit.NeoEditClient"
+	]
+  },
+  "mixins": [
+	"neoedit.mixins.json"
+  ],
+  "depends": {
+	"fabricloader": ">=0.19.2",
+	"minecraft": "~26.1",
+	"java": ">=25",
+	"fabric-api": "*"
+  }
 }

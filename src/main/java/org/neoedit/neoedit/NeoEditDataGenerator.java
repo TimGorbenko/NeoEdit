@@ -6,5 +6,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 public class NeoEditDataGenerator implements DataGeneratorEntrypoint {
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
+		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+		pack.addProvider(NeoEditEnglishLangProvider::new);
 	}
 }
