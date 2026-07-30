@@ -1,7 +1,13 @@
 {
   "key.category.neoedit.neoedit": "NeoEdit",
   "key.neoedit.enter_edit_mode": "Enter Edit Mode",
+  "neoedit.messages.clear_area_1": "Cleared ",
+  "neoedit.messages.clear_area_2": " blocks",
   "neoedit.messages.enter_edit_mode": "Entered Edit Mode",
   "neoedit.messages.exit_edit_mode": "Exited Edit Mode",
-  "neoedit.messages.neoedit_message_prefix": "[NeoEdit]"
+  "neoedit.messages.fill_area_1": "Filled ",
+  "neoedit.messages.fill_area_2": " blocks with ",
+  "neoedit.messages.neoedit_message_prefix": "[NeoEdit]",
+  "neoedit.messages.set_pos_a": "Set position A to ",
+  "neoedit.messages.set_pos_b": "Set position B to "
 }

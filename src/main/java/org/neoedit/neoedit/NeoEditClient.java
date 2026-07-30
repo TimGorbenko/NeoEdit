@@ -36,10 +36,10 @@ public final class NeoEditClient implements ClientModInitializer {
 			while (enterEditModeKey.consumeClick()) {
 				if (minecraft.player != null) {
 					if (editModeEnabled) {
-						sendMessage("neoedit.messages.exit_edit_mode");
+						sendMessage(Component.translatable("neoedit.messages.exit_edit_mode"));
 					}
 					else {
-						sendMessage("neoedit.messages.enter_edit_mode");
+						sendMessage(Component.translatable("neoedit.messages.enter_edit_mode"));
 					}
 					editModeEnabled = !editModeEnabled;
 				}
@@ -54,9 +54,17 @@ public final class NeoEditClient implements ClientModInitializer {
 					case GLFW.GLFW_KEY_F:
 						ItemStack itemStack = Minecraft.getInstance().player.getMainHandItem();
 						if (itemStack.isEmpty()) {
+							MutableComponent messagePartOne = Component.translatable("neoedit.messages.clear_area_1");
+							MutableComponent messagePartTwo = Component.translatable("neoedit.messages.clear_area_2");
+							sendMessage(messagePartOne.append(String.valueOf(getSelectionSize())).append(messagePartTwo));
+
 							fillArea(Blocks.AIR.defaultBlockState());
 						}
 						else if (itemStack.getItem() instanceof BlockItem blockItem) {
+							MutableComponent messagePartOne = Component.translatable("neoedit.messages.fill_area_1");
+							MutableComponent messagePartTwo = Component.translatable("neoedit.messages.fill_area_2");
+							sendMessage(messagePartOne.append(String.valueOf(getSelectionSize())).append(messagePartTwo).append(blockItem.getBlock().getName()));
+
 							fillArea(blockItem.getBlock().defaultBlockState());
 						}
 						break;
@@ -99,10 +107,13 @@ public final class NeoEditClient implements ClientModInitializer {
 			}
 		}
 
+		assert targetBlockPosition != null;
 		if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            sendMessage(Component.translatable("neoedit.messages.set_pos_a").append(targetBlockPosition.toShortString()));
 			posA = targetBlockPosition;
 		}
 		else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+			sendMessage(Component.translatable("neoedit.messages.set_pos_b").append(targetBlockPosition.toShortString()));
 			posB = targetBlockPosition;
 		}
 	}
@@ -113,12 +124,11 @@ public final class NeoEditClient implements ClientModInitializer {
 		redoStack.clear();
 	}
 
-	public static void sendMessage(String key) {
+	public static void sendMessage(MutableComponent message) {
 		if (Minecraft.getInstance().player != null) {
 			MutableComponent prefix = Component.translatable("neoedit.messages.neoedit_message_prefix").withStyle(ChatFormatting.BLUE);
 			MutableComponent colon = Component.literal(": ").withStyle(ChatFormatting.WHITE);
-			MutableComponent message = Component.translatable(key).withStyle(ChatFormatting.WHITE);
-			Minecraft.getInstance().player.sendSystemMessage(prefix.append(colon).append(message));
+			Minecraft.getInstance().player.sendSystemMessage(prefix.append(colon).append(message.withStyle(ChatFormatting.WHITE)));
 		}
 	}
 
@@ -145,6 +155,10 @@ public final class NeoEditClient implements ClientModInitializer {
 	private static boolean ctrlKeyHeld() {
 		Window window = Minecraft.getInstance().getWindow();
 		return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
+	}
+
+	private static int getSelectionSize() {
+		return (Math.abs(posA.getX() - posB.getX()) + 1) * (Math.abs(posA.getY() - posB.getY()) + 1) * (Math.abs(posA.getZ() - posB.getZ()) + 1);
 	}
 
 	public static KeyMapping enterEditModeKey;

@@ -19,5 +19,13 @@ public class NeoEditEnglishLangProvider extends FabricLanguageProvider {
 		translationBuilder.add("neoedit.messages.neoedit_message_prefix", "[NeoEdit]");
 		translationBuilder.add("neoedit.messages.enter_edit_mode", "Entered Edit Mode");
 		translationBuilder.add("neoedit.messages.exit_edit_mode", "Exited Edit Mode");
+
+		translationBuilder.add("neoedit.messages.set_pos_a", "Set position A to ");
+		translationBuilder.add("neoedit.messages.set_pos_b", "Set position B to ");
+
+		translationBuilder.add("neoedit.messages.fill_area_1", "Filled ");
+		translationBuilder.add("neoedit.messages.fill_area_2", " blocks with ");
+		translationBuilder.add("neoedit.messages.clear_area_1", "Cleared ");
+		translationBuilder.add("neoedit.messages.clear_area_2", " blocks");
 	}
 }
