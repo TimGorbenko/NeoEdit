@@ -1,6 +1,7 @@
 package org.neoedit.neoedit;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
@@ -19,6 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -59,39 +61,36 @@ public final class NeoEditClient implements ClientModInitializer {
 						}
 						break;
 
-					case GLFW.GLFW_KEY_LEFT_CONTROL:
-						ctrlKeyHeld = true;
+					case GLFW.GLFW_KEY_R:
+						if (ctrlKeyHeld()) {
+							redo();
+						}
+						else {
+							undo();
+						}
 						break;
 
 					default:
 						break;
 				}
 			}
-			else if (action == GLFW.GLFW_RELEASE) {
-                if (key == GLFW.GLFW_KEY_LEFT_CONTROL) {
-                    ctrlKeyHeld = false;
-                }
-			}
 		}
 	}
 
 	private static void fillArea(BlockState blockState) {
-		ArrayList<BlockEdit> edits = new ArrayList<>();
+		ArrayList<BlockEdit> blockEdits = new ArrayList<>();
 		for (BlockPos pos : BlockPos.betweenClosed(posA, posB)) {
-			edits.add(new BlockEdit(pos.immutable(), blockState));
+			blockEdits.add(new BlockEdit(pos.immutable(), blockState));
 		}
-		Edit fillAreaEdit = new Edit(edits);
-		fillAreaEdit.apply();
+		performEdit(new Edit(blockEdits));
 	}
 
 	public static void handleMouseInput(int button) {
 		assert Minecraft.getInstance().player != null;
-
 		BlockPos targetBlockPosition = null;
-
 		if (Minecraft.getInstance().player.raycastHitResult(5.0f, Objects.requireNonNull(Minecraft.getInstance().getCameraEntity())) instanceof BlockHitResult blockHitResult) {
 			if (blockHitResult.getType() == HitResult.Type.BLOCK) {
-				if (ctrlKeyHeld) {
+				if (ctrlKeyHeld()) {
 					targetBlockPosition = blockHitResult.getBlockPos().offset(blockHitResult.getDirection().getUnitVec3i());
 				}
 				else {
@@ -108,6 +107,12 @@ public final class NeoEditClient implements ClientModInitializer {
 		}
 	}
 
+	private static void performEdit(Edit edit) {
+		edit.apply();
+		undoStack.push(edit);
+		redoStack.clear();
+	}
+
 	public static void sendMessage(String key) {
 		if (Minecraft.getInstance().player != null) {
 			MutableComponent prefix = Component.translatable("neoedit.messages.neoedit_message_prefix").withStyle(ChatFormatting.BLUE);
@@ -117,6 +122,31 @@ public final class NeoEditClient implements ClientModInitializer {
 		}
 	}
 
+	private static void undo() {
+		if (undoStack.isEmpty()) {
+			return;
+		}
+
+		Edit edit = undoStack.pop();
+		edit.undo();
+		redoStack.push(edit);
+	}
+
+	private static void redo() {
+		if (redoStack.isEmpty()) {
+			return;
+		}
+
+		Edit edit = redoStack.pop();
+		edit.apply();
+		undoStack.push(edit);
+	}
+
+	private static boolean ctrlKeyHeld() {
+		Window window = Minecraft.getInstance().getWindow();
+		return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
+	}
+
 	public static KeyMapping enterEditModeKey;
 
 	public static boolean editModeEnabled;
@@ -124,5 +154,6 @@ public final class NeoEditClient implements ClientModInitializer {
 	private static BlockPos posA;
 	private static BlockPos posB;
 
-	private static boolean ctrlKeyHeld = false;
+	private static final ArrayDeque<Edit> undoStack = new ArrayDeque<>();
+	private static final ArrayDeque<Edit> redoStack = new ArrayDeque<>();
 }

@@ -25,7 +25,15 @@ public class Edit {
     }
 
     public void undo() {
+        ArrayList<BlockPos> blockPositions = new ArrayList<>(edits.size());
+        ArrayList<BlockState> blockStates = new ArrayList<>(edits.size());
+        for (BlockEdit edit : edits) {
+            blockPositions.add(edit.position);
+            blockStates.add(edit.oldState);
+        }
 
+        EditPayload editPayload = new EditPayload(blockPositions, blockStates);
+        ClientPlayNetworking.send(editPayload);
     }
 
     private List<BlockEdit> edits;
